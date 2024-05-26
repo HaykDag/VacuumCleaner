@@ -5,6 +5,12 @@ body {
   background-color: rgb(72, 70, 70);
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .flex {
   display: flex;
   justify-content: center;
@@ -62,12 +68,66 @@ body {
 }
 
 #room,
-#type {
+#type,
+#train {
   font-size: 15px;
   font-weight: 400;
   text-align: center;
 }
 
+#train,
+#save {
+  display: none;
+}
+
 #networkCanvas {
   background-color: gray;
+}
+
+.train-info {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  background-color: teal;
+  padding: 10px;
+  border-radius: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350 px;
+}
+
+.details {
+  flex-direction: column;
+  gap: 5px;
+  color: black;
+  font-size: larger;
+  text-align: center;
+  font-weight: 500;
+}
+
+.details span {
+  display: flex;
+  flex-direction: column;
+  color: gold;
+  text-align: left;
+}
+
+#vacuumCount,
+#mutation {
+  width: 50px;
+  border: none;
+}
+
+#generate {
+  padding: 5px;
+  border: none;
+  background-color: gold;
+  color: teal;
+  font-size: large;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  user-select: none;
 }

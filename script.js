@@ -3,6 +3,13 @@ const info = document.getElementById("cover");
 const restartBtn = document.getElementById("restart");
 const roomEl = document.getElementById("room");
 const controlType = document.getElementById("type");
+const saveBtn = document.getElementById("save");
+const trainBtn = document.getElementById("train");
+const trainInfo = document.getElementById("trainInfo");
+const trainNumber = document.getElementById("vacuumCount");
+const trainMutation = document.getElementById("mutation");
+const generateBtn = document.getElementById("generate");
+const closeTrainInfo = document.getElementById("closeTrainInfo");
 
 //Main canvas
 const canvas = document.getElementById("myCanvas");
@@ -26,17 +33,37 @@ let bestBrain = null;
 let currRoom = "room1";
 const brains = [brain1, brain2, brain3];
 const startPos = { x: 740, y: 540 };
-const mutation = 0.08;
+let mutation = 0.08;
 
 let room = new Room(canvas);
 vacuums.push(new Vacuum(startPos.x, startPos.y, 40, canvas, "KEYS"));
 
 controlType.onchange = (e) => {
   controlType.blur();
+  vacuums.splice(1);
   if (e.target.value !== "AI") {
     networkCanvas.style.display = "none";
+    saveBtn.style.display = "none";
+    trainBtn.style.display = "none";
   } else {
     networkCanvas.style.display = "flex";
+    saveBtn.style.display = "inline-block";
+    trainBtn.style.display = "inline-block";
+    trainBtn.onclick = () => {
+      trainInfo.style.display = "flex";
+      generateBtn.onclick = () => {
+        trainInfo.style.display = "none";
+        const number = Number(trainNumber.value);
+        mutation = Number(trainMutation.value);
+        mutation = mutation < 0 ? 0 : mutation > 1 ? 1 : mutation;
+        if (isNaN(number) || number < 1) return;
+
+        generateCleaners(number);
+      };
+      closeTrainInfo.onclick = () => {
+        trainInfo.style.display = "none";
+      };
+    };
   }
   const { x, y, dir } = vacuums[0];
   vacuums[0] = new Vacuum(x, y, 40, canvas, e.target.value);
@@ -89,9 +116,12 @@ function animate() {
   // }
   room.update(vacuums[0]);
   room.draw(ctx);
-
-  vacuums[0].update(room.walls);
-  vacuums[0].draw(ctx, true);
+  for (const cleaner of vacuums) {
+    cleaner.update(room.walls);
+    cleaner.draw(ctx);
+  }
+  //vacuums[0].update(room.walls);
+  //vacuums[0].draw(ctx, true);
 
   Visualizer.drawNetwork(netCtx, bestBrain);
 
@@ -148,3 +178,12 @@ canvas.addEventListener("contextmenu", (e) => {
     }
   }
 });
+
+function generateCleaners(n) {
+  vacuums.splice(1);
+  for (let i = 0; i <= n; i++) {
+    const cleaner = new Vacuum(startPos.x, startPos.y, 40, canvas, "AI");
+    vacuums.push(cleaner);
+  }
+  loadBrain();
+}

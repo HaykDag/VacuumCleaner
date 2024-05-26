@@ -77,10 +77,10 @@ class Vacuum {
       }
     }
     //this is for multiple vacuums
-    // this.dist = distance(
-    //   [this.x, this.y],
-    //   [this.startingPointX, this.startingPointY]
-    // );
+    this.dist = distance(
+      [this.x, this.y],
+      [this.startingPointX, this.startingPointY]
+    );
 
     if (this.controlType === "AI") this.#activateAI(offsets);
     if (this.controlType === "ALGO") this.#activateAlgo(offsets);

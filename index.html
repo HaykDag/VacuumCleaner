@@ -10,8 +10,7 @@
     <canvas id="myCanvas"> </canvas>
     <canvas id="networkCanvas"> </canvas>
     <div class="btns">
-      <button onclick="save()">Save</button>
-      <!-- <button onclick="load()">load</button> -->
+      <button id="save" onclick="save()">Save</button>
       <select id="room">
         <option value="room1">Room 1</option>
         <option value="room2">Room 2</option>
@@ -22,6 +21,48 @@
         <option value="AI">AI</option>
         <option value="ALGO">Algo</option>
       </select>
+      <button id="train">Train AI</button>
+    </div>
+    <div class="train-info flex" id="trainInfo">
+      <span
+        style="
+          position: absolute;
+          top: 5px;
+          right: 5px;
+          font-size: larger;
+          color: red;
+          cursor: pointer;
+          user-select: none;
+        "
+        id="closeTrainInfo"
+        >X</span
+      >
+      <div class="details flex">
+        Generate AI vacuum Cleaners at the same time, elminate the ones that are
+        performing bad by right clicking on them and leave only one to save as a
+        best brain.
+        <br />
+        <br />
+        <span>
+          Enter the Number of vacuum cleaners up to 500 (considering power of
+          your computer).
+        </span>
+        <span>
+          <span style="text-align: center">
+            Mutation should be in the range of 0 to 1:</span
+          >
+          <span>0 - means all the vacuums will have the same brain.</span>
+          <span>
+            1 - means the saved brain will be completly overwritten randomly for
+            all the vacuums.</span
+          >
+        </span>
+      </div>
+      <div>
+        <input type="number" placeholder="Number" id="vacuumCount" />
+        <input type="number" placeholder="Mutation" id="mutation" />
+      </div>
+      <button id="generate">Generate</button>
     </div>
     <div class="cover flex" id="cover">
       <p>Congratulations the room is clean now!</p>
