@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vacuum</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="flex">
+    <canvas id="myCanvas"> </canvas>
+    <canvas id="networkCanvas"> </canvas>
+    <div class="btns">
+      <button onclick="save()">Save</button>
+      <!-- <button onclick="load()">load</button> -->
+      <select id="room">
+        <option value="room1">Room 1</option>
+        <option value="room2">Room 2</option>
+        <option value="room3">Room 3</option>
+      </select>
+      <select id="type">
+        <option value="KEYS">Keyboard</option>
+        <option value="AI">AI</option>
+        <option value="ALGO">Algo</option>
+      </select>
+    </div>
+    <div class="cover flex" id="cover">
+      <p>Congratulations the room is clean now!</p>
+      <button class="restartBtn" id="restart">Restart</button>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="visualizer.js"></script>
+    <script src="network.js"></script>
+    <script src="sensor.js"></script>
+    <script src="wall.js"></script>
+    <script src="room.js"></script>
+    <script src="garbage.js"></script>
+    <script src="vacuum.js"></script>
+    <script src="brain.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

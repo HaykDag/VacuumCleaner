@@ -1,0 +1,73 @@
+body {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(72, 70, 70);
+}
+
+.flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.cover {
+  display: none;
+  flex-direction: column;
+  user-select: none;
+  position: absolute;
+  border: 2px solid goldenrod;
+  padding: 15px;
+  border-radius: 15px;
+  font-size: larger;
+  font-weight: bold;
+  background-color: rgba(51, 71, 83, 0.216);
+  color: gold;
+}
+
+.restartBtn {
+  padding: 10px;
+  background-color: teal;
+  border: 1px solid gold;
+  border-radius: 10px;
+  font-size: large;
+  color: white;
+}
+
+#myCanvas {
+  background-color: rgb(255, 165, 79);
+  border-radius: 5px;
+}
+
+.btns {
+  position: absolute;
+  top: 10px;
+  user-select: none;
+
+}
+
+.btns button,
+#room,
+#type {
+  padding: 5px;
+  border: none;
+  background-color: teal;
+  color: white;
+  font-size: large;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  user-select: none;
+}
+
+#room,
+#type {
+  font-size: 15px;
+  font-weight: 400;
+  text-align: center;
+}
+
+#networkCanvas {
+  background-color: gray;
+}
