@@ -129,11 +129,11 @@ function save() {
 function loadBrain() {
   let data = null;
   if (currRoom === "room1") {
-    data = localStorage.getItem("bestBrain1");
+    data = localStorage.getItem("bestBrain1") || JSON.stringify(brains[0]);
   } else if (currRoom === "room2") {
-    data = localStorage.getItem("bestBrain2");
+    data = localStorage.getItem("bestBrain2") || JSON.stringify(brains[1]);
   } else {
-    data = localStorage.getItem("bestBrain3");
+    data = localStorage.getItem("bestBrain3") || JSON.stringify(brains[2]);
   }
   if (!data) return;
   bestBrain = JSON.parse(data);
