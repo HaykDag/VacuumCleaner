@@ -25,15 +25,11 @@ networkCanvas.height = 600;
 networkCanvas.style.display = controlType.value === "AI" ? "flex" : "none";
 
 //globals
-let mouseClicked = false;
-let turnCounter = 0;
-let turnSide = "left";
 const vacuums = [];
 let bestBrain = null;
 let currRoom = "room1";
 const brains = [brain1, brain2, brain3];
 const startPos = { x: 740, y: 540 };
-let mutation = 0.08;
 
 let room = new Room(canvas);
 vacuums.push(new Vacuum(startPos.x, startPos.y, 40, canvas, "KEYS"));
@@ -56,6 +52,7 @@ controlType.onchange = (e) => {
         const number = Number(trainNumber.value);
         mutation = Number(trainMutation.value);
         mutation = mutation < 0 ? 0 : mutation > 1 ? 1 : mutation;
+
         if (isNaN(number) || number < 1) return;
 
         generateCleaners(number);
@@ -100,31 +97,15 @@ animate();
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  //const maxDist = Math.max(...vacuums.map((vac) => vac.dist));
-  //const selectedVacuum = vacuums.find((vac) => vac.selected);
-  // for (let i = 0; i < vacuums.length; i++) {
-  //   if (vacuums[i].dist === maxDist && !selectedVacuum) {
-  //     //best vacuum
-  //     bestBrain = vacuums[i].brain;
-  //     vacuums[i].draw(ctx, true);
-  //   } else if (selectedVacuum && vacuums[i].selected) {
-  //     bestBrain = vacuums[i].brain;
-  //     vacuums[i].draw(ctx, true);
-  //   } else {
-  //     vacuums[i].draw(ctx);
-  //   }
-  // }
   room.update(vacuums[0]);
   room.draw(ctx);
-  for (const cleaner of vacuums) {
+  for (let i = 0; i < vacuums.length; i++) {
+    const cleaner = vacuums[i];
     cleaner.update(room.walls);
-    cleaner.draw(ctx);
+    i === 0 ? cleaner.draw(ctx, true) : cleaner.draw(ctx);
   }
-  //vacuums[0].update(room.walls);
-  //vacuums[0].draw(ctx, true);
 
   Visualizer.drawNetwork(netCtx, bestBrain);
-
   requestAnimationFrame(animate);
 }
 

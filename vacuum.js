@@ -4,21 +4,17 @@ class Vacuum {
     this.controlType = controlType;
     this.x = x;
     this.y = y;
-    this.startingPointX = x;
-    this.startingPointY = y;
-    this.dist = 0;
     this.rad = rad;
     this.dir = 0;
     this.rSweeper = [];
     this.lSweeper = [];
     this.sweepHands = [];
     this.sweeperAcc = 2;
-    this.speed = 1;
-    this.sweeperSpeed = 0.09;
+    this.speed = 2;
+    this.sweeperSpeed = 0.1;
     this.sweepCount = 10;
     this.sweepLength = this.rad * 0.7;
     this.distFromCenter = this.rad * 0.8;
-    this.selected = false;
     this.#turnOn();
     if (controlType === "KEYS") {
       this.#addEventListners();
@@ -30,6 +26,8 @@ class Vacuum {
     this.forward = false;
     this.left = false;
     this.right = false;
+    this.turnSide = "left";
+    this.turnDur = 0;
     this.path = [];
   }
 
@@ -49,7 +47,7 @@ class Vacuum {
     this.hit = false;
     this.sensor.update(walls);
     this.sweeperAcc = (this.sweeperAcc + 1) % 360;
-    const offsets = [1, 1, 1, 1, 1]; // [rightSensor, forwardSensor, leftSensor];
+    const offsets = [1, 1, 1, 1, 1]; // [right, rightMid, center, leftMid , left];
 
     for (let i = 0; i < this.sensor.readings.length; i++) {
       const { offset, rayIndex } = this.sensor.readings[i];
@@ -76,11 +74,6 @@ class Vacuum {
         }
       }
     }
-    //this is for multiple vacuums
-    this.dist = distance(
-      [this.x, this.y],
-      [this.startingPointX, this.startingPointY]
-    );
 
     if (this.controlType === "AI") this.#activateAI(offsets);
     if (this.controlType === "ALGO") this.#activateAlgo(offsets);
@@ -298,24 +291,24 @@ class Vacuum {
     const leftOffset = offsets[4];
     if (this.hit) {
       this.forward = false;
-    } else if (turnCounter <= 0) {
+    } else if (this.turnDur <= 0) {
       this.forward = true;
       this.left = false;
       this.right = false;
-      turnCounter = 0;
+      this.turnDur = 0;
     }
     if (!this.forward) {
-      if (turnCounter <= 0) {
-        turnCounter = Math.random() * (Math.PI * 0.5) + 0.2;
-        turnSide = this.#chooseSide(rightOffset, leftOffset);
+      if (this.turnDur <= 0) {
+        this.turnDur = Math.random() * (Math.PI * 0.2) + 0.1;
+        this.turnSide = this.#chooseSide(rightOffset, leftOffset);
       } else {
-        turnSide === "right" ? (this.right = true) : (this.left = true);
-        turnCounter -= 0.02;
+        this.turnSide === "right" ? (this.right = true) : (this.left = true);
+        this.turnDur -= 0.02;
       }
     }
   }
   #chooseSide(right, left) {
-    if (Math.abs(right - left) > 0.4) {
+    if (Math.abs(right - left) > 0.3) {
       return right > left ? "right" : "left";
     } else {
       return Math.random() > 0.5 ? "right" : "left";

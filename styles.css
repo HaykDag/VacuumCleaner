@@ -60,15 +60,14 @@ input::-webkit-inner-spin-button {
   border: none;
   background-color: teal;
   color: white;
-  font-size: large;
-  font-weight: bold;
+  font-size: 15px;
+  font-weight: 400;
+  text-align: center;
   border-radius: 15px;
   cursor: pointer;
   user-select: none;
 }
 
-#room,
-#type,
 #train {
   font-size: 15px;
   font-weight: 400;
