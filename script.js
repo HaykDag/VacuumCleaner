@@ -27,7 +27,6 @@ networkCanvas.style.display = controlType.value === "AI" ? "flex" : "none";
 
 //globals
 const vacuums = [];
-let bestBrain = null;
 let currRoom = "room1";
 const startPos = { x: 740, y: 540 };
 
@@ -77,7 +76,6 @@ roomEl.onchange = (e) => {
   currRoom = e.target.value;
   loadBrain();
 
-  vacuums[0].brain = bestBrain;
   const walls = Room.getWalls(currRoom);
   room.walls.splice(4);
   room.walls.push(...walls);
@@ -117,34 +115,22 @@ function initRoom() {
 }
 
 function save() {
-  const data = JSON.stringify(vacuums[0].brain);
-  if (currRoom === "room1") {
-    localStorage.setItem("bestBrain1", data);
-  } else if (currRoom === "room2") {
-    localStorage.setItem("bestBrain2", data);
-  } else {
-    localStorage.setItem("bestBrain3", data);
-  }
+  const data = localStorage.getItem("brains");
+  const brains = data ? JSON.parse(data) : {};
+  brains[currRoom] = vacuums[0].brain;
+  localStorage.setItem("brains", JSON.stringify(brains));
 }
 
 function loadBrain() {
-  let data = null;
-  if (currRoom === "room1") {
-    data = localStorage.getItem("bestBrain1");
-  } else if (currRoom === "room2") {
-    data = localStorage.getItem("bestBrain2");
-  } else {
-    data = localStorage.getItem("bestBrain3");
-  }
-  if (!data) {
-    bestBrain = vacuums[0].brain;
-    return;
-  }
+  const data = localStorage.getItem("brains");
+  if (!data) return;
 
-  vacuums[0].brain = JSON.parse(data);
-  bestBrain = vacuums[0].brain;
+  const brains = JSON.parse(data);
+
+  vacuums[0].brain = brains[currRoom];
   for (let i = 1; i < vacuums.length; i++) {
-    vacuums[i].brain = JSON.parse(data);
+    const brains = JSON.parse(data);
+    vacuums[i].brain = brains[currRoom];
 
     NeuralNetwork.mutate(vacuums[i].brain, mutation);
   }
