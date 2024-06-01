@@ -46,6 +46,16 @@ input::-webkit-inner-spin-button {
   border-radius: 5px;
 }
 
+#turnOnInfo {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  color: rgba(255, 255, 255, 0.549);
+  display: inline-block;
+  user-select: none;
+  margin: 0;
+}
+
 .btns {
   position: absolute;
   top: 10px;

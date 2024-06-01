@@ -10,6 +10,7 @@ const trainNumber = document.getElementById("vacuumCount");
 const trainMutation = document.getElementById("mutation");
 const generateBtn = document.getElementById("generate");
 const closeTrainInfo = document.getElementById("closeTrainInfo");
+const turnOninfo = document.getElementById("turnOnInfo");
 
 //Main canvas
 const canvas = document.getElementById("myCanvas");
@@ -28,7 +29,6 @@ networkCanvas.style.display = controlType.value === "AI" ? "flex" : "none";
 const vacuums = [];
 let bestBrain = null;
 let currRoom = "room1";
-const brains = [brain1, brain2, brain3];
 const startPos = { x: 740, y: 540 };
 
 let room = new Room(canvas);
@@ -45,6 +45,7 @@ controlType.onchange = (e) => {
     networkCanvas.style.display = "flex";
     saveBtn.style.display = "inline-block";
     trainBtn.style.display = "inline-block";
+    loadBrain();
     trainBtn.onclick = () => {
       trainInfo.style.display = "flex";
       generateBtn.onclick = () => {
@@ -105,7 +106,7 @@ function animate() {
     i === 0 ? cleaner.draw(ctx, true) : cleaner.draw(ctx);
   }
 
-  Visualizer.drawNetwork(netCtx, bestBrain);
+  Visualizer.drawNetwork(netCtx, vacuums[0].brain);
   requestAnimationFrame(animate);
 }
 
@@ -116,7 +117,7 @@ function initRoom() {
 }
 
 function save() {
-  const data = JSON.stringify(bestBrain);
+  const data = JSON.stringify(vacuums[0].brain);
   if (currRoom === "room1") {
     localStorage.setItem("bestBrain1", data);
   } else if (currRoom === "room2") {
@@ -129,20 +130,23 @@ function save() {
 function loadBrain() {
   let data = null;
   if (currRoom === "room1") {
-    data = localStorage.getItem("bestBrain1") || JSON.stringify(brains[0]);
+    data = localStorage.getItem("bestBrain1");
   } else if (currRoom === "room2") {
-    data = localStorage.getItem("bestBrain2") || JSON.stringify(brains[1]);
+    data = localStorage.getItem("bestBrain2");
   } else {
-    data = localStorage.getItem("bestBrain3") || JSON.stringify(brains[2]);
+    data = localStorage.getItem("bestBrain3");
   }
-  if (!data) return;
-  bestBrain = JSON.parse(data);
-  vacuums[0].brain = bestBrain;
+  if (!data) {
+    bestBrain = vacuums[0].brain;
+    return;
+  }
+
+  vacuums[0].brain = JSON.parse(data);
+  bestBrain = vacuums[0].brain;
   for (let i = 1; i < vacuums.length; i++) {
     vacuums[i].brain = JSON.parse(data);
-    if (i > 0) {
-      NeuralNetwork.mutate(vacuums[i].brain, mutation);
-    }
+
+    NeuralNetwork.mutate(vacuums[i].brain, mutation);
   }
 }
 
@@ -161,7 +165,7 @@ canvas.addEventListener("contextmenu", (e) => {
 });
 
 function generateCleaners(n) {
-  vacuums.splice(1);
+  vacuums.length = 0;
   for (let i = 0; i <= n; i++) {
     const cleaner = new Vacuum(startPos.x, startPos.y, 40, canvas, "AI");
     vacuums.push(cleaner);

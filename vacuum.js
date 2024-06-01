@@ -212,6 +212,9 @@ class Vacuum {
     document.addEventListener("keydown", (e) => {
       if (e.code === "Space") {
         this.turned = !this.turned;
+        this.turned
+          ? (turnOninfo.style.display = "none")
+          : (turnOninfo.style.display = "inline-block");
       }
     });
   }
