@@ -130,7 +130,7 @@ class Room {
         new Wall({ x: 150, y: 150 }, { x: 150, y: 430 }),
         new Wall({ x: 150, y: 430 }, { x: 350, y: 430 }),
       ];
-    } else {
+    } else if (room === "room3") {
       return [
         new Wall(
           { x: canvas.width, y: canvas.height - 150 },
@@ -158,5 +158,6 @@ class Room {
         ),
       ];
     }
+    return [];
   }
 }

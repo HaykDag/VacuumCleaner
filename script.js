@@ -11,6 +11,7 @@ const trainMutation = document.getElementById("mutation");
 const generateBtn = document.getElementById("generate");
 const closeTrainInfo = document.getElementById("closeTrainInfo");
 const turnOninfo = document.getElementById("turnOnInfo");
+const roomName = document.getElementById("roomName");
 
 //Main canvas
 const canvas = document.getElementById("myCanvas");
@@ -28,6 +29,7 @@ networkCanvas.style.display = controlType.value === "AI" ? "flex" : "none";
 //globals
 const vacuums = [];
 let currRoom = "room1";
+editMode = false; //adding new room
 const startPos = { x: 740, y: 540 };
 
 let room = new Room(canvas);
@@ -70,13 +72,21 @@ controlType.onchange = (e) => {
 
 roomEl.onchange = (e) => {
   roomEl.blur();
-  const { controlType } = vacuums[0];
+  const { controlType } = vacuums[0] || { controlType: "KEYS" };
   vacuums[0] = new Vacuum(startPos.x, startPos.y, 40, canvas, controlType);
 
   currRoom = e.target.value;
   loadBrain();
 
   const walls = Room.getWalls(currRoom);
+  if (walls.length === 0) {
+    let walldata = null;
+    const roomData = localStorage.getItem("rooms");
+    roomData ? (walldata = JSON.parse(roomData)) : [];
+    for (const { start, end } of walldata[currRoom]) {
+      walls.push(new Wall(start, end));
+    }
+  }
   room.walls.splice(4);
   room.walls.push(...walls);
 };
@@ -96,34 +106,41 @@ animate();
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  room.update(vacuums[0]);
+  !editMode && room.update(vacuums[0]);
+
   room.draw(ctx);
-  for (let i = 0; i < vacuums.length; i++) {
-    const cleaner = vacuums[i];
-    cleaner.update(room.walls);
-    i === 0 ? cleaner.draw(ctx, true) : cleaner.draw(ctx);
+
+  if (!editMode) {
+    for (let i = 0; i < vacuums.length; i++) {
+      const cleaner = vacuums[i];
+      cleaner.update(room.walls);
+      i === 0 ? cleaner.draw(ctx, true) : cleaner.draw(ctx);
+    }
+
+    Visualizer.drawNetwork(netCtx, vacuums[0].brain);
   }
 
-  Visualizer.drawNetwork(netCtx, vacuums[0].brain);
   requestAnimationFrame(animate);
 }
 
 function initRoom() {
+  let walldata = {};
+  const roomData = localStorage.getItem("rooms");
+  roomData ? (walldata = JSON.parse(roomData)) : {};
+  for (const key of Object.keys(walldata)) {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.innerText = key;
+    roomEl.append(opt);
+  }
   const walls = Room.getWalls(currRoom);
   room.walls.push(...walls);
   room.generateGarbage(200);
 }
 
-function save() {
-  const data = localStorage.getItem("brains");
-  const brains = data ? JSON.parse(data) : {};
-  brains[currRoom] = vacuums[0].brain;
-  localStorage.setItem("brains", JSON.stringify(brains));
-}
-
 function loadBrain() {
   const data = localStorage.getItem("brains");
-  if (!data) return;
+  if (!data || !data[currRoom]) return;
 
   const brains = JSON.parse(data);
 
@@ -157,4 +174,45 @@ function generateCleaners(n) {
     vacuums.push(cleaner);
   }
   loadBrain();
+}
+
+function save() {
+  if (editMode) {
+    const data = localStorage.getItem("rooms");
+    const rooms = data ? JSON.parse(data) : {};
+    const name = roomName.value;
+    if (!name) {
+      turnOninfo.innerText = "You must enter a name for the room";
+      return;
+    }
+    rooms[name] = room.walls.slice(4);
+    localStorage.setItem("rooms", JSON.stringify(rooms));
+
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.innerText = name;
+    roomEl.append(opt);
+
+    turnOninfo.innerText = "Press space bar to turn on the vacuum";
+    saveBtn.style.display = "none";
+    roomName.style.display = "none";
+    roomEl.style.display = "inline-block";
+    controlType.style.display = "inline-block";
+  } else {
+    const data = localStorage.getItem("brains");
+    const brains = data ? JSON.parse(data) : {};
+    brains[currRoom] = vacuums[0].brain;
+    localStorage.setItem("brains", JSON.stringify(brains));
+  }
+}
+
+function addRoom() {
+  turnOninfo.innerText = "Right click on the walls to delete them.";
+  saveBtn.style.display = "inline-block";
+  roomName.style.display = "inline-block";
+  roomEl.style.display = "none";
+  controlType.style.display = "none";
+
+  editMode = true;
+  vacuums.length = 0;
 }

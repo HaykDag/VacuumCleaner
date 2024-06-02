@@ -124,9 +124,17 @@ input::-webkit-inner-spin-button {
 }
 
 #vacuumCount,
-#mutation {
+#mutation,
+#roomName {
   width: 50px;
   border: none;
+  border-radius: 10px;
+  padding: 4px;
+  text-align: center;
+}
+
+#roomName {
+  display: none;
 }
 
 #generate {
